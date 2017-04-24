@@ -14,6 +14,7 @@ import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ListView;
+import android.widget.ProgressBar;
 import android.widget.TextView;
 
 import java.util.ArrayList;
@@ -33,6 +34,11 @@ public class MainActivity extends AppCompatActivity implements LoaderManager.Loa
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
+        ProgressBar loadingData = (ProgressBar) findViewById(R.id.loading_indicator);
+        loadingData.setVisibility(View.INVISIBLE);
+
+
+
         // Get a reference to the ConnectivityManager to check state of network connectivity
         ConnectivityManager connMgr = (ConnectivityManager) getSystemService(Context.CONNECTIVITY_SERVICE);
         // Get details on the currently active default data network
@@ -43,13 +49,14 @@ public class MainActivity extends AppCompatActivity implements LoaderManager.Loa
         btn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
+
                 Log.v("EditText", txt.getText().toString());
                 searchWord = txt.getText().toString();
                 USGS_REQUEST_URL= "https://www.googleapis.com/books/v1/volumes?q=" + searchWord + "&maxResults=10";
 
                 if( networkInfo != null && networkInfo.isConnected()) {
                     android.app.LoaderManager loaderManager = getLoaderManager();
-                    loaderManager.initLoader(0, null, this);
+                    loaderManager.initLoader(0, null, MainActivity.this);
                 }else{
                     View loadingIndicator = findViewById(R.id.loading_indicator);
                     loadingIndicator.setVisibility(View.GONE);
@@ -79,30 +86,28 @@ public class MainActivity extends AppCompatActivity implements LoaderManager.Loa
         // so the list can be populated in the user interface
         bookListView.setAdapter(mAdapter);
 
-
-
-
-
     }
 
     @Override
     public Loader<List<Book>> onCreateLoader(int i, Bundle bundle) {
         // TODO: Create a new loader for the given URL
-        Log.v("MainActivity", "In onCreateLoader");
+        Log.v("MainActivity", "Step 1 In onCreateLoader");
         return new BookLoader(this,USGS_REQUEST_URL);
     }
 
     @Override
     public void onLoaderReset(Loader<List<Book>> loader) {
         // Loader reset, so we can clear out our existing data.
-        Log.v("MainActivity", "In onLoaderReset");
+        Log.v("MainActivity", "Step 2 In onLoaderReset");
         mAdapter.clear();
+        //android.app.LoaderManager loaderManager = getLoaderManager();
+        //loaderManager.initLoader(0, null, MainActivity.this);
     }
 
     @Override
     public void onLoadFinished(Loader<List<Book>> loader,List<Book> earthquakes) {
         // Clear the adapter of previous earthquake data
-
+        Log.v("MainActivity", "Step 3 In onLoaderReset");
         View loadingIndicator = findViewById(R.id.loading_indicator);
         loadingIndicator.setVisibility(View.GONE);
         mAdapter.clear();
