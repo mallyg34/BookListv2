@@ -27,16 +27,16 @@ import static com.example.android.booklistingapp.MainActivity.LOG_TAG;
 public final class QueryUtils {
 
 
-
-    private QueryUtils(){
-            }
+    private QueryUtils() {
+    }
 
     public static List<Book> extractBooks(String bookJSON) {
-        String authors0="";
-        String totalAuthors1="";
-        String totalAuthors2="";
-        String totalAuthors3="";
-        String totalAuthors4="";
+        String authors0 = "";
+        String totalAuthors1 = "";
+        String totalAuthors2 = "";
+        String totalAuthors3 = "";
+        String totalAuthors4 = "";
+        int pageCount = 0;
         try {
             Thread.sleep(2000);
         } catch (InterruptedException e) {
@@ -80,12 +80,12 @@ public final class QueryUtils {
 
 
                 // Extract the value for the key called "mag"
-
-                int pageCount = properties.getInt("pageCount");
-                Log.i(LOG_TAG, "Hello"+pageCount);
-
+                if (properties.has("pageCount")) {
+                    pageCount = properties.getInt("pageCount");
+                    Log.i(LOG_TAG, "Hello" + pageCount);
+                }
                 // Extract the value for the key called "time"
-                JSONArray authorArray= properties.getJSONArray("authors");
+                JSONArray authorArray = properties.getJSONArray("authors");
                 if (properties.optJSONArray("authors") != null) {
 
                     authors0 = authorArray.toString();
@@ -105,7 +105,7 @@ public final class QueryUtils {
 
                 // Create a new {@link Earthquake} object with the magnitude, location, time,
                 // and url from the JSON response.
-                Book book = new Book(pageCount,title,totalAuthors4);
+                Book book = new Book(pageCount, title, totalAuthors4);
 
                 // Add the new {@link Earthquake} to the list of earthquakes.
                 books.add(book);
